@@ -130,13 +130,8 @@
 						}).fail(function(){
 							$('#nameList').empty();
 							$('#nameList').append('<div><span>Something went wrong while trying to recieve name list.</span></div>');
-							if (/chrom(e|ium)/.test(navigator.userAgent.toLowerCase())){
-								$('#nameList').append("<div><span>Using Chrome on a desktop and don't mind a work around? Install <a href='https://chrome.google.com/webstore/detail/cors-toggle/omcncfnpmcabckcddookmnajignpffnh?hl=en'>this plugin</a> while I figure out a solution.</span></div>");
-							} else {
-								$('#nameList').append("<div><span>I know it's broken.<br/>If you don't mind a work around, try again in Chrome on a desktop and follow the link.</span></div>");
-								console.log(navigator.userAgent);
-							}
 						});
+				return false;
 			}
 			
 			function appendNameToList(name, user){
