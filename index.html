@@ -52,12 +52,12 @@
 								<div class="form-group">
 									<label for="user" class="control-label col-sm-5 col-lg-offset-1">Your name</label>
 									<div class="col-lg-5 col-sm-7">
-										<input id="user" name="user"class="form-control" placeholder="Billy Bob">
+										<input id="user" name="user"class="form-control" placeholder="Pinkie Pie">
 									</div>
 								</div>
 								<div class="form-group" id="buttonGroup">
 									<div class="col-lg-offset-6 col-sm-offset-5 col-lg-6 col-sm-7">
-										<button type="submit" class="btn btn-primary">Submit</button>
+										<button type="submit" class="btn btn-pink">Submit</button>
 									</div>
 								</div>
 							</form>
@@ -91,7 +91,7 @@
 					e.preventDefault();
 					$('#buttonGroup').empty();
 					$('#buttonGroup').append("<div class='text-center'><span>Submitting...</span></div>");
-					$.ajax('names/add?'+ $(this).serialize())
+					$.ajax('https://jkgwgbtcff.execute-api.us-west-2.amazonaws.com/prod/baby/names/add?'+ $(this).serialize())
 							.done(function(data){
 								$('#buttonGroup').empty();
 								$('#buttonGroup').append("<div class='text-center'><span><strong>Thank you for you submission!</strong></span></div>");
@@ -115,7 +115,7 @@
 			}
 			
 			function populateNameList(){
-				$.ajax('names/list/')
+				$.ajax('https://jkgwgbtcff.execute-api.us-west-2.amazonaws.com/prod/baby/names/list/')
 						.done(function(data){
 							$('#nameList').empty();
 							var names = $.parseJSON(data);
