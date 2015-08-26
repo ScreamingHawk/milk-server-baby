@@ -31,66 +31,37 @@
 					<div class="col-lg-4 col-sm-6 col-xs-12 text-center">
 						<h1>Baby Standen</h1>
 						<h3>Coming Soon 2016</h3>
-						<button id="showNameInfoButton" class="btn btn-success hidden" onclick="showNameInfo();">Names?</button>
-						<script>
-							function showNameInfo(){
-								$('#showNameInfoButton').remove();
-								$('#nameInfo').removeClass('hidden');
-							}
-						</script>
+						<button id="showNameInfoButton" class="btn btn-pink" onclick="showNameInfo();">Baby Names</button>
 					</div>
 					<div class="col-lg-4 col-sm-3 col-xs-hidden"></div>
 				</div>
 				<div class="row hidden" style="margin-top: 20px;" id="nameInfo">
 					<div class="col-lg-4 col-sm-3 col-xs-2"></div>
 					<div class="col-lg-4 col-sm-6 col-xs-8 text-center">
-						<div id="formParent" style="text-align: left;">
+						<div id="nameList" style="margin-bottom: 20px;">
+							<span>Loading names...</span>
+						</div>
+						<div id="formParent" class="hidden" style="text-align: left;">
 							<form id="addNameForm" class="form-horizontal">
 								<div class="form-group">
 									<label for="name" class="control-label col-sm-5 col-lg-offset-1">Baby name</label>
 									<div class="col-lg-5 col-sm-7">
-										<input id="name" class="form-control" placeholder="Sally">
+										<input id="name" name="name" class="form-control" placeholder="Sally">
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="name" class="control-label col-sm-5 col-lg-offset-1">Your name</label>
+									<label for="user" class="control-label col-sm-5 col-lg-offset-1">Your name</label>
 									<div class="col-lg-5 col-sm-7">
-										<input id="name" class="form-control" placeholder="Billy Bob">
+										<input id="user" name="user"class="form-control" placeholder="Billy Bob">
 									</div>
 								</div>
 								<div class="form-group" id="buttonGroup">
 									<div class="col-lg-offset-6 col-sm-offset-5 col-lg-6 col-sm-7">
-										<button type="submit" class="btn btn-primary" onclick="return submitForm();">Submit</button>
+										<button type="submit" class="btn btn-primary">Submit</button>
 									</div>
 								</div>
-								<script>
-									function submitForm(){
-										$.get('names/add?'+ $('#addNameForm').serialize(), function(data){
-											alert(data);
-										});
-										$('#buttonGroup').empty();
-										$('#buttonGroup').append("<div class='text-center'><span><strong>Thank you for you submission!</strong></span></div>")
-										return false;
-									}
-								</script>
 							</form>
 						</div>
-						<div id="nameList">
-						</div>
-						<script>
-							function populateNameList(){
-								$.ajax('names/list/')
-										.done(function(data){
-											alert(data);
-											var names = $.parseJSON(data);
-											for (var i = 0; i < names.length; i++){
-												$('#nameList').append('<div><strong>'+names[i].name+'</strong> suggested by '+names[i].user+'</div>');
-											}
-										}).fail(function(){
-											alert('failure');
-										});
-							}
-						</script>
 					</div>
 					<div class="col-lg-4 col-sm-3 col-xs-2"></div>
 				</div>
@@ -113,7 +84,65 @@
 		<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
 
 		<script src="js/vendor/bootstrap.min.js"></script>
-
+		
+		<script>
+			$(document).ready(function(){
+				$('#addNameForm').submit(function(e){
+					e.preventDefault();
+					$('#buttonGroup').empty();
+					$('#buttonGroup').append("<div class='text-center'><span>Submitting...</span></div>");
+					$.ajax('names/add?'+ $(this).serialize())
+							.done(function(data){
+								$('#buttonGroup').empty();
+								$('#buttonGroup').append("<div class='text-center'><span><strong>Thank you for you submission!</strong></span></div>");
+								if ($('#user').val() == ""){
+									appendNameToList($('#name').val(), "Anonymous");
+								} else {
+									appendNameToList($('#name').val(), $('#user').val());
+								}
+							}).fail(function(){
+								$('#buttonGroup').empty();
+								$('#buttonGroup').append("<div class='text-center'><span>Something went wrong while processing your submission.</span></div>");
+							});
+					return false;
+				})
+			});
+			
+			function showNameInfo(){
+				populateNameList();
+				$('#showNameInfoButton').remove();
+				$('#nameInfo').removeClass('hidden');
+			}
+			
+			function populateNameList(){
+				$.ajax('names/list/')
+						.done(function(data){
+							$('#nameList').empty();
+							var names = $.parseJSON(data);
+							for (var i = 0; i < names.length; i++){
+								if (names[i].user == null || names[i].user == ""){
+									appendNameToList(names[i].name, "Anonymous");
+								} else {
+									appendNameToList(names[i].name, names[i].user);
+								}
+							}
+							$('#formParent').removeClass('hidden');
+						}).fail(function(){
+							$('#nameList').empty();
+							$('#nameList').append('<div><span>Something went wrong while trying to recieve name list.</span></div>');
+							if (/chrom(e|ium)/.test(navigator.userAgent.toLowerCase())){
+								$('#nameList').append("<div><span>Using Chrome on a desktop and don't mind a work around? Install <a href='https://chrome.google.com/webstore/detail/cors-toggle/omcncfnpmcabckcddookmnajignpffnh?hl=en'>this plugin</a> while I figure out a solution.</span></div>");
+							} else {
+								$('#nameList').append("<div><span>I know it's broken.<br/>If you don't mind a work around, try again in Chrome on a desktop and follow the link.</span></div>");
+								console.log(navigator.userAgent);
+							}
+						});
+			}
+			
+			function appendNameToList(name, user){
+				$('#nameList').append('<div><span><strong>'+name+'</strong> suggested by '+user+'</span></div>');
+			}
+		</script>
 		<script>
 			(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
 			function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
