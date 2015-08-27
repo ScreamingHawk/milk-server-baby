@@ -119,6 +119,12 @@
 						.done(function(data){
 							$('#nameList').empty();
 							var names = $.parseJSON(data);
+							names.sort(function(a, b){
+								if (a.votes != b.votes){
+									return b.votes - a.votes;
+								}
+								return a.name > b.name ? 1 : -1;
+							});
 							for (var i = 0; i < names.length; i++){
 								if (names[i].user == null || names[i].user == ""){
 									appendNameToList(names[i].name, "Anonymous");
