@@ -4,18 +4,17 @@ var dynamodb = new doc.DynamoDB();
 
 exports.handler = function(event, context) {
     console.log(JSON.stringify(event, null, '  '));
-    var name = event.name.replace(/\W/g, '');
-    name = name.charAt(0).toUpperCase() + name.slice(1);
-    var user = event.user.replace(/\W/g, '');
-    user = user.charAt(0).toUpperCase() + user.slice(1);
-    var datetime = new Date().getTime().toString();
-    dynamodb.putItem({
+    
+    var bname = event.name.replace(/\W/g, '');
+    bname = bname.charAt(0).toUpperCase() + bname.slice(1);
+    dynamodb.updateItem({
         "TableName": "baby-names",
-        "Item" : {
-            "name": name,
-            "datetime": datetime,
-            "user": user,
-            "votes" : 0
+        "Key" : {
+            name : bname
+        },
+        "UpdateExpression" : "SET votes = votes + :a",
+        "ExpressionAttributeValues" : {
+            ":a" : 1
         }
     }, function(err, data) {
         if (err) {
