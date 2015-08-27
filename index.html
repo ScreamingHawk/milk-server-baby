@@ -36,8 +36,8 @@
 					<div class="col-lg-4 col-sm-3 col-xs-hidden"></div>
 				</div>
 				<div class="row hidden" style="margin-top: 20px;" id="nameInfo">
-					<div class="col-lg-4 col-sm-3 col-xs-2"></div>
-					<div class="col-lg-4 col-sm-6 col-xs-8 text-center">
+					<div class="col-lg-4 col-sm-3 col-xs-hidden"></div>
+					<div class="col-lg-4 col-sm-6 col-xs-12 text-center">
 						<div id="nameList" style="margin-bottom: 10px; padding: 10px; background-color: rgba(0, 0, 0, 0.4);">
 							<span>Loading names...</span>
 						</div>
@@ -63,7 +63,7 @@
 							</form>
 						</div>
 					</div>
-					<div class="col-lg-4 col-sm-3 col-xs-2"></div>
+					<div class="col-lg-4 col-sm-3 col-xs-hidden"></div>
 				</div>
 			</div>
 		</div>
@@ -135,7 +135,7 @@
 			}
 			
 			function appendNameToList(name, user, votes){
-				$('#nameList').append('<div><span><strong>'+name+'</strong> suggested by '+user+' <i id="'+name+'arrow" class="fa fa-arrow-up" onclick="vote(\''+name+'\');"></i> <span id="'+name+'votes">'+votes+'</span></span></div>');
+				$('#nameList').append('<div><span><strong>'+name+'</strong> suggested by '+user+' <i id="'+name+'arrow" class="fa fa-arrow-up" style="cursor: pointer" onclick="vote(\''+name+'\');"></i> <span id="'+name+'votes">'+votes+'</span></span></div>');
 			}
 			
 			function vote(name){
@@ -143,7 +143,10 @@
 				$('#'+name+'arrow').prop('onclick', null).attr('onclick', null);
 				$('#'+name+'votes').html(parseInt($('#'+name+'votes').html()) + 1);
 				$('#'+name+'votes').css('color', 'lightgreen');
-				$.ajax('https://jkgwgbtcff.execute-api.us-west-2.amazonaws.com/prod/baby/names/vote?name='+name);
+				$.ajax('https://jkgwgbtcff.execute-api.us-west-2.amazonaws.com/prod/baby/names/vote?name='+name)
+						.fail(function(){
+							console.log('Voting for '+name+' failed.');
+						});
 			}
 		</script>
 	</body>
