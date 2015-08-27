@@ -38,7 +38,7 @@
 				<div class="row hidden" style="margin-top: 20px;" id="nameInfo">
 					<div class="col-lg-4 col-sm-3 col-xs-hidden"></div>
 					<div class="col-lg-4 col-sm-6 col-xs-12 text-center">
-						<div id="nameList" style="margin-bottom: 10px; padding: 10px; background-color: rgba(0, 0, 0, 0.4);">
+						<div id="nameList" style="margin-bottom: 20px; padding: 10px; background-color: rgba(0, 0, 0, 0.4);">
 							<span>Loading names...</span>
 						</div>
 						<div id="formParent" class="hidden" style="text-align: left;">
@@ -115,6 +115,8 @@
 			}
 			
 			function populateNameList(){
+				$('#nameList').empty();
+				$('#nameList').append('<span>Loading names...</span>');
 				$.ajax('https://jkgwgbtcff.execute-api.us-west-2.amazonaws.com/prod/baby/names/list/')
 						.done(function(data){
 							$('#nameList').empty();
@@ -132,6 +134,8 @@
 									appendNameToList(names[i].name, names[i].user, names[i].votes);
 								}
 							}
+							$('#nameList').append('<div><span style="float:right;"><a href="" onclick="return populateNameList();">refresh</a></span></div>');
+							$('#nameList').append('<div class="clearfix"></div>');
 							$('#formParent').removeClass('hidden');
 						}).fail(function(){
 							$('#nameList').empty();
