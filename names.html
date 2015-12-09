@@ -1,0 +1,164 @@
+<!doctype html>
+<!--[if lt IE 7]>	  <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>		 <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>		 <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>Baby Standen</title>
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="css/main.css">
+
+		<script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+	</head>
+	<body class="dark baby">
+		<!--[if lt IE 8]>
+			<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+		<![endif]-->
+		<div id="wrap">
+			<div class="container-fluid" style="margin-bottom: 50px;">
+				<div class="hidden-xs" style="margin-top: 50px"></div>
+				<div class="visible-xs" style="margin-top: 10px"></div>
+				<div class="row">
+					<div class="col-lg-4 col-sm-3 col-xs-hidden"></div>
+					<div class="col-lg-4 col-sm-6 col-xs-12 text-center">
+						<h1>Baby Standen</h1>
+						<h3>Coming Soon</h3>
+						<h4><span class="small">14<sup>th</sup> January 2016</span></h4>
+						<button id="showNameInfoButton" class="btn btn-pink" onclick="showNameInfo();" style="margin-top: 10px;">Baby Names</button>
+					</div>
+					<div class="col-lg-4 col-sm-3 col-xs-hidden"></div>
+				</div>
+				<div class="row hidden" style="margin-top: 20px;" id="nameInfo">
+					<div class="col-lg-4 col-sm-3 col-xs-hidden"></div>
+					<div class="col-lg-4 col-sm-6 col-xs-12 text-center">
+						<div id="nameList" style="margin-bottom: 10px; padding: 10px; background-color: rgba(0, 0, 0, 0.4);">
+							<span>Loading names&hellip;</span>
+						</div>
+						<div id="formParent" class="hidden" style="text-align: left;">
+							<form id="addNameForm" class="form-horizontal">
+								<div class="form-group">
+									<label for="name" class="control-label col-sm-5 col-lg-offset-1">Baby name</label>
+									<div class="col-lg-5 col-sm-7">
+										<input id="name" name="name" class="form-control" placeholder="Sally">
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="user" class="control-label col-sm-5 col-lg-offset-1">Your name</label>
+									<div class="col-lg-5 col-sm-7">
+										<input id="user" name="user"class="form-control" placeholder="Pinkie Pie">
+									</div>
+								</div>
+								<div class="form-group" id="buttonGroup">
+									<div class="col-lg-offset-6 col-sm-offset-5 col-lg-6 col-sm-7">
+										<button type="submit" class="btn btn-pink">Submit</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="col-lg-4 col-sm-3 col-xs-hidden"></div>
+				</div>
+			</div>
+		</div>
+		
+		<footer id="footer">
+			<div class="container">
+				<div class="col-xs-8">
+					<p>&copy; Michael Standen <script>document.write(new Date().getFullYear());</script></p>
+				</div>
+				<div class="col-xs-4">
+					<p class="text-right">
+						<a href="https://www.changetip.com/tipme/michaelstanden"><i class="fa fa-btc"></i> Bitcoin</a>
+					</p>
+				</div>
+			</div>
+		</footer>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+		<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
+
+		<script src="js/vendor/bootstrap.min.js"></script>
+		<script src="js/g-analytics.js"></script>
+		
+		<script>
+			$(document).ready(function(){
+				$('#addNameForm').submit(function(e){
+					e.preventDefault();
+					$('#buttonGroup').empty();
+					$('#buttonGroup').append("<div class='text-center'><span>Submitting...</span></div>");
+					$.ajax('https://jkgwgbtcff.execute-api.us-west-2.amazonaws.com/prod/baby/names/add?'+ $(this).serialize())
+							.done(function(data){
+								$('#buttonGroup').empty();
+								$('#buttonGroup').append("<div class='text-center'><span><strong>Thank you for you submission!</strong></span></div>");
+								if ($('#user').val() == ""){
+									appendNameToList($('#name').val(), "Anonymous", 0);
+								} else {
+									appendNameToList($('#name').val(), $('#user').val(), 0);
+								}
+							}).fail(function(){
+								$('#buttonGroup').empty();
+								$('#buttonGroup').append("<div class='text-center'><span>Something went wrong while processing your submission.</span></div>");
+							});
+					return false;
+				})
+			});
+			
+			function showNameInfo(){
+				populateNameList();
+				$('#showNameInfoButton').remove();
+				$('#nameInfo').removeClass('hidden');
+			}
+			
+			function populateNameList(){
+				$('#nameList').empty();
+				$('#nameList').append('<span>Loading names&hellip;</span>');
+				$.ajax('https://jkgwgbtcff.execute-api.us-west-2.amazonaws.com/prod/baby/names/list/')
+						.done(function(data){
+							$('#nameList').empty();
+							var names = $.parseJSON(data);
+							names.sort(function(a, b){
+								if (a.votes != b.votes){
+									return b.votes - a.votes;
+								}
+								return a.name > b.name ? 1 : -1;
+							});
+							for (var i = 0; i < names.length; i++){
+								if (names[i].user == null || names[i].user == ""){
+									appendNameToList(names[i].name, "Anonymous");
+								} else {
+									appendNameToList(names[i].name, names[i].user, names[i].votes);
+								}
+							}
+							$('#nameList').append('<div><span style="float: right;"><a href="" onclick="return populateNameList();">refresh</span></div>');
+							$('#nameList').append('<div class="clearfix"></div>');
+							$('#formParent').removeClass('hidden');
+						}).fail(function(){
+							$('#nameList').empty();
+							$('#nameList').append('<div><span>Something went wrong while trying to recieve name list.</span></div>');
+						});
+				return false;
+			}
+			
+			function appendNameToList(name, user, votes){
+				$('#nameList').append('<div><span><strong>'+name+'</strong> suggested by '+user+' <i id="'+name+'arrow" class="fa fa-arrow-up" style="cursor: pointer" onclick="vote(\''+name+'\');"></i> <span id="'+name+'votes">'+votes+'</span></span></div>');
+			}
+			
+			function vote(name){
+				$('#'+name+'arrow').css('color', 'lightgreen');
+				$('#'+name+'arrow').prop('onclick', null).attr('onclick', null);
+				$('#'+name+'votes').html(parseInt($('#'+name+'votes').html()) + 1);
+				$('#'+name+'votes').css('color', 'lightgreen');
+				$.ajax('https://jkgwgbtcff.execute-api.us-west-2.amazonaws.com/prod/baby/names/vote?name='+name)
+						.fail(function(){
+							console.log('Voting for '+name+' failed.');
+						});
+			}
+		</script>
+	</body>
+</html>
